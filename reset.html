@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сброс системы капчи</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #050505 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 500px;
+            padding: 40px;
+            background: #121212;
+            border-radius: 16px;
+            border: 1px solid #222;
+        }
+        
+        h1 {
+            color: #8a2be2;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            background: #8a2be2;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #9d4edd;
+            transform: translateY(-3px);
+        }
+        
+        .danger {
+            background: #e17055;
+        }
+        
+        .danger:hover {
+            background: #d63031;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>СБРОС СИСТЕМЫ КАПЧИ</h1>
+        <p>Эта страница позволяет сбросить все данные капчи и начать заново.</p>
+        
+        <div style="margin: 30px 0;">
+            <button onclick="resetCaptcha()">СБРОСИТЬ КАПЧУ</button>
+            <button class="danger" onclick="resetAll()">ПОЛНЫЙ СБРОС</button>
+        </div>
+        
+        <div id="result" style="margin-top: 20px; color: #00b894;"></div>
+    </div>
+
+    <script>
+        function resetCaptcha() {
+            // Удаляем только данные капчи
+            localStorage.removeItem('captcha1Progress');
+            localStorage.removeItem('captcha2Passed');
+            localStorage.removeItem('captchaAttempts');
+            localStorage.removeItem('captchaStartTime');
+            
+            document.getElementById('result').textContent = 'Данные капчи сброшены!';
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+        
+        function resetAll() {
+            // Полный сброс
+            localStorage.clear();
+            document.getElementById('result').textContent = 'Все данные сброшены!';
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

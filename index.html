@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>new era</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #050505 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .captcha-container {
+            background: #121212;
+            border: 1px solid #8a2be2;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #8a2be2;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .warning-icon {
+            font-size: 48px;
+            color: #fdcb6e;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .message {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #a0a0a0;
+        }
+        
+        .btn {
+            background: #8a2be2;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .btn:hover {
+            background: #9d4edd;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
+        }
+        
+        .access-code {
+            background: rgba(138, 43, 226, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            border: 1px dashed #8a2be2;
+        }
+        
+        .unlimited-attempts {
+            margin-top: 20px;
+            color: #00b894;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="captcha-container">
+        <div class="warning-icon">🔒</div>
+        <h1>ДОСТУП</h1>
+        
+        <div class="message">
+            <p>А ТУТ ПИЗДЕЦ Я ТЕ ГОВОРЮ.</p>
+            <p>ЩА ТЫ ДОЛЖЕН ПРОЙТИ ЛЕГКИЕ КАПЧИ</p>
+            <p>Мой лучший подарок на день рождения — это то, что я не сижу в тюрьме</p>
+        </div>
+        
+        <div class="access-code">
+            CAPTCHA-UNLIMITED
+        </div>
+        
+        <button class="btn" onclick="startCaptcha()">НАЧАТЬ ПРОВЕРКУ</button>
+        
+        <div class="unlimited-attempts">
+            ✅ ТУТ БУДЕТ РЕКЛАМА ТАНКОВ
+        </div>
+    </div>
+
+    <script>
+        function startCaptcha() {
+            // Сохраняем время начала прохождения капчи
+            localStorage.setItem('captchaStartTime', Date.now());
+            
+            // Перенаправляем на первую капчу
+            window.location.href = 'captcha1.html';
+        }
+    </script>
+</body>
+</html>

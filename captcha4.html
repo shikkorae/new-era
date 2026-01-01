@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Капча 4: Финальный пазл</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #050505 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .captcha-container {
+            background: #121212;
+            border: 1px solid #222222;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        }
+        
+        .header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #222222;
+            text-align: center;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .step {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .step.completed {
+            background: #00b894;
+        }
+        
+        .step.active {
+            background: #8a2be2;
+        }
+        
+        h1 {
+            color: #8a2be2;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .instructions {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #a0a0a0;
+            text-align: center;
+        }
+        
+        .access-granted {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 1s ease;
+        }
+        
+        .success-icon {
+            font-size: 80px;
+            color: #00b894;
+            margin-bottom: 20px;
+            animation: successPulse 2s infinite;
+        }
+        
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .access-message {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            color: #a0a0a0;
+        }
+        
+        .access-code {
+            background: rgba(0, 184, 148, 0.2);
+            border: 2px solid #00b894;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            font-family: monospace;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            color: #00b894;
+            text-align: center;
+        }
+        
+        .final-button {
+            background: #8a2be2;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            margin: 20px 10px;
+        }
+        
+        .final-button:hover {
+            background: #9d4edd;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
+        }
+        
+        .attempts {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(225, 112, 85, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #e17055;
+        }
+        
+        .timer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 184, 148, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #00b894;
+            font-family: monospace;
+        }
+        
+        .puzzle-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #8a2be2, #5a189a);
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .puzzle-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="attempts">
+        Попыток: <span id="attempts">3</span>
+    </div>
+    
+    <div class="timer" id="timer">
+        Время: <span id="timeElapsed">00:00</span>
+    </div>
+    
+    <div class="captcha-container" id="finalCaptcha">
+        <div class="header">
+            <div class="step-indicator">
+                <div class="step completed">1</div>
+                <div class="step completed">2</div>
+                <div class="step completed">3</div>
+                <div class="step active">4</div>
+            </div>
+            <h1>ФИНАЛЬНАЯ ПРОВЕРКА</h1>
+            <div class="instructions">
+                Поздравляем! Вы прошли основные этапы проверки.
+                Теперь вы можете получить доступ к основному ресурсу.
+            </div>
+        </div>
+        
+        <div class="access-granted" id="accessGranted">
+            <div class="success-icon">✅</div>
+            <h2 style="color: #00b894; margin-bottom: 20px;">ДОСТУП РАЗРЕШЕН</h2>
+            
+            <div class="access-message">
+                Вы успешно доказали, что вы не Золик и не робот.
+                Все проверки пройдены успешно.
+            </div>
+            
+            <div class="access-code" id="accessCode">
+                GENERATING...
+            </div>
+            
+            <div class="access-message">
+                Сохраните этот код для быстрого доступа в будущем.
+                Действителен 24 часа.
+            </div>
+            
+            <div>
+                <button class="final-button" onclick="goToMainSite()">
+                    🎮 ПЕРЕЙТИ К ИГРЕ
+                </button>
+                
+                <button class="final-button" onclick="resetAll()" style="background: #333; border: 1px solid #444;">
+                    🔄 НАЧАТЬ СНАЧАЛА
+                </button>
+            </div>
+            
+            
+        </div>
+    </div>
+
+    <script>
+        let startTime = Date.now();
+        let attempts = 3;
+        
+        // Восстанавливаем попытки
+        const savedAttempts = localStorage.getItem('captchaAttempts');
+        if (savedAttempts !== null) {
+            attempts = parseInt(savedAttempts);
+            document.getElementById('attempts').textContent = attempts;
+        }
+        
+        // Восстанавливаем время начала прохождения капчи
+        const savedStartTime = localStorage.getItem('captchaStartTime');
+        if (savedStartTime !== null) {
+            startTime = parseInt(savedStartTime);
+        }
+        
+        // Таймер
+        function updateTimer() {
+            const now = Date.now();
+            const elapsed = now - startTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            
+            document.getElementById('timeElapsed').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        setInterval(updateTimer, 1000);
+        updateTimer();
+        
+        // Генерация кода доступа
+        function generateAccessCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            
+            for (let i = 0; i < 12; i++) {
+                if (i > 0 && i % 4 === 0) code += '-';
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            
+            // Сохраняем код в localStorage
+            const expiry = Date.now() + 24 * 60 * 60 * 1000; // 24 часа
+            localStorage.setItem('accessCode', code);
+            localStorage.setItem('accessCodeExpiry', expiry);
+            
+            return code;
+        }
+        
+        // Проверяем, все ли капчи пройдены
+        function checkAllCaptchasPassed() {
+            const captcha1 = localStorage.getItem('captcha1Progress');
+            const captcha2 = localStorage.getItem('captcha2Passed');
+            const captcha3 = localStorage.getItem('captcha3Passed');
+            
+            return parseInt(captcha1) >= 100 && 
+                   captcha2 === 'true' && 
+                   captcha3 === 'true';
+        }
+        
+        // Перенаправление на основной сайт
+        function goToMainSite() {
+            // Создаем сессию доступа
+            localStorage.setItem('accessGranted', 'true');
+            localStorage.setItem('accessTimestamp', Date.now());
+            
+            // Перенаправляем на оригинальный index.html
+            window.location.href = 'index_original.html'; // Переименуйте ваш оригинальный файл
+        }
+        
+        // Сброс всей системы
+        function resetAll() {
+            if (confirm('Вы уверены? Все прогрессы будут сброшены.')) {
+                localStorage.removeItem('captcha1Progress');
+                localStorage.removeItem('captcha2Passed');
+                localStorage.removeItem('captcha3Passed');
+                localStorage.removeItem('captchaAttempts');
+                localStorage.removeItem('captchaStartTime');
+                localStorage.removeItem('accessCode');
+                localStorage.removeItem('accessCodeExpiry');
+                localStorage.removeItem('accessGranted');
+                localStorage.removeItem('accessTimestamp');
+                
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем, все ли капчи пройдены
+            if (!checkAllCaptchasPassed()) {
+                document.getElementById('accessGranted').innerHTML = `
+                    <div style="color: #e17055; font-size: 48px; margin-bottom: 20px;">⛔</div>
+                    <h2 style="color: #e17055; margin-bottom: 20px;">ДОСТУП ЗАПРЕЩЕН</h2>
+                    <div style="color: #a0a0a0; margin-bottom: 30px;">
+                        Вы не прошли все этапы проверки.<br>
+                        Вернитесь и завершите все капчи.
+                    </div>
+                    <button class="final-button" onclick="window.location.href='captcha1.html'">
+                        ← ВЕРНУТЬСЯ К ПРОВЕРКАМ
+                    </button>
+                `;
+                return;
+            }
+            
+            // Все капчи пройдены - показываем успех
+            const accessCode = generateAccessCode();
+            document.getElementById('accessCode').textContent = accessCode;
+            
+            // Сохраняем факт успешного прохождения
+            localStorage.setItem('allCaptchasPassed', 'true');
+        });
+        
+        // Проверяем, не закончились ли попытки
+        if (attempts <= 0) {
+            document.getElementById('finalCaptcha').innerHTML = `
+                <div class="header">
+                    <h1 style="color: #e17055;">ДОСТУП ЗАБЛОКИРОВАН</h1>
+                </div>
+                <div class="access-granted">
+                    <div style="color: #e17055; font-size: 48px; margin-bottom: 20px;">🚫</div>
+                    <h2 style="color: #e17055; margin-bottom: 20px;">ПОПЫТКИ ЗАКОНЧИЛИСЬ</h2>
+                    <div style="color: #a0a0a0; margin-bottom: 30px;">
+                        Слишком много неудачных попыток.<br>
+                        Доступ к ресурсу заблокирован.
+                    </div>
+                    <button class="final-button" onclick="resetAll()">
+                        🔄 НАЧАТЬ СНАЧАЛА
+                    </button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

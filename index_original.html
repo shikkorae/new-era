@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>new era</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Аудиоплеер -->
+        <div class="audio-player">
+            <div class="player-controls">
+                <button id="play-pause-btn" class="player-btn">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="volume-control">
+                    <button id="mute-btn" class="volume-btn">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <input type="range" id="volume-slider" min="0" max="100" value="50" class="volume-slider">
+                    <span id="volume-value" class="volume-value">50%</span>
+                </div>
+                <div class="track-info">
+                    <span class="track-name">ФА</span>
+                    <span class="player-status" id="player-status">Пауза</span>
+                </div>
+            </div>
+        </div>
+
+        <header>
+            <h1>Беглый зек</h1>
+            <div class="subtitle">Джеб, ушёл, джеб</div>
+        </header>
+        
+        <main>
+            <div class="game-info">
+                <div class="instructions">
+                    <p>Соберите пазл если не еблан. <span class="highlight">Ласт чать откроется</span> только если тебе не пизданули гранатой по ебалу, и ты не стал Ванькой Золиком.</p>
+                    <p>Тут должен был быть текст, а мне так лень его писать.</p>
+                </div>
+                
+                <div class="stats">
+                    <div class="counter">
+                        <span class="counter-label">Собрано:</span>
+                        <span class="counter-value" id="counter">0</span>
+                        <span class="counter-total">/8</span>
+                    </div>
+                    <div class="secret-notice">
+                        <span class="lock-icon">🔒</span> Ласт часть заблокирована
+                    </div>
+                </div>
+            </div>
+            
+            <div class="game-area">
+                <div class="puzzle-board">
+                    <h2>Поле</h2>
+                    <div class="puzzle-grid" id="puzzle-grid">
+                        <!-- Сетка 3x3 будет сгенерирована через JS -->
+                    </div>
+                </div>
+                
+                <div class="pieces-pool">
+                    <h2>Части</h2>
+                    <div class="pieces-container" id="pieces-container">
+                        <!-- 8 частей будут сгенерированы через JS -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="secret-section" id="secret-section">
+                <div class="secret-header">
+                    <h3><span class="unlock-icon">🔓</span> Ласт часть открыта</h3>
+                    <p>Ты всетаки собрал и похоже тебе на стать Золиком но все может быть.</p>
+                </div>
+                <div class="secret-piece-container">
+                    <div class="secret-piece" id="secret-piece" data-piece="3">
+                        <div class="piece-number">3</div>
+                        <div class="piece-label">Секретная часть</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="shuffle-btn" class="btn btn-secondary">
+                    <i class="fas fa-random"></i> Перемешать
+                </button>
+                <button id="hint-btn" class="btn btn-secondary">
+                    <i class="fas fa-lightbulb"></i> Подсказка
+                </button>
+                <button id="reset-btn" class="btn btn-primary">
+                    <i class="fas fa-redo"></i> Новая игра
+                </button>
+            </div>
+        </main>
+        
+        <!-- Модальное окно для завершения -->
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div class="completion-modal" id="completion-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Нконец то нахуй</h2>
+                    <button class="modal-close" id="modal-close">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="completion-image">
+                        <div class="image-container">
+                            <img src="img/full.jpg" alt="Полное изображение" class="full-image-modal">
+                        </div>
+                        <div class="image-caption">full и не только можно получить написав мне в тг</div>
+                    </div>
+                    
+                    <div class="completion-message">
+                        <p>Поздравляю с побегом из Саратова.</p>
+                        <p class="resolution-info">А у меня зима в сердце сын ебаной бляди</p>
+                    </div>
+                    
+                    <button id="play-again-btn" class="btn btn-primary btn-large">
+                        <i class="fas fa-gamepad"></i> Играть снова
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>По всем вопросам пишите мне суки @shikkoraee</p>
+        </footer>
+    </div>
+
+    <!-- Аудио элемент -->
+    <audio id="background-music" loop>
+        <source src="music/ФА.mp3" type="audio/mpeg">
+        <source src="music/ФА.mp3" type="audio/ogg">
+        Ваш браузер не поддерживает аудио элемент.
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+</html>

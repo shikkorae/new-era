@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>button</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #050505 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .captcha-container {
+            background: #121212;
+            border: 1px solid #222222;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #222222;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .step {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #333;
+        }
+        
+        .step.active {
+            background: #8a2be2;
+        }
+        
+        .step.completed {
+            background: #00b894;
+        }
+        
+        h1 {
+            color: #8a2be2;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .instructions {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #a0a0a0;
+        }
+        
+        .hold-button-container {
+            margin: 40px 0;
+            position: relative;
+            min-height: 300px;
+        }
+        
+        .hold-button {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8a2be2, #5a189a);
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 15px 35px rgba(138, 43, 226, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            z-index: 10;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        
+        .hold-button:hover:not(.holding) {
+            transform: scale(1.05);
+        }
+        
+        .hold-button.holding {
+            background: linear-gradient(135deg, #e17055, #d63031);
+            animation: pulse 0.5s infinite;
+            transform: scale(1);
+            cursor: grabbing;
+        }
+        
+        .hold-button.escaped {
+            animation: escapeAnimation 0.5s ease-out;
+            pointer-events: none;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(225, 112, 85, 0.7);
+            }
+            50% { 
+                box-shadow: 0 0 0 20px rgba(225, 112, 85, 0);
+            }
+        }
+        
+        @keyframes escapeAnimation {
+            0% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(var(--escape-x, 200px), var(--escape-y, -150px)) scale(0.8);
+                opacity: 0;
+            }
+        }
+        
+        .hold-time {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            font-family: monospace;
+        }
+        
+        .hold-label {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .progress-ring {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            border-radius: 50%;
+            background: conic-gradient(#00b894 0%, transparent 0%);
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .required-time {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(138, 43, 226, 0.1);
+            border-radius: 10px;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+        }
+        
+        .required-time span {
+            color: #8a2be2;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .warning {
+            color: #fdcb6e;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            padding: 10px;
+            background: rgba(253, 203, 110, 0.1);
+            border-radius: 8px;
+        }
+        
+        .escape-warning {
+            color: #e17055;
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .success-message {
+            color: #00b894;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        .escape-count {
+            margin-top: 10px;
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .escape-notice {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e17055;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: none;
+            z-index: 20;
+            white-space: nowrap;
+        }
+        
+        .escape-notice.show {
+            display: block;
+            animation: noticeAppear 0.3s ease;
+        }
+        
+        @keyframes noticeAppear {
+            from { 
+                opacity: 0; 
+                transform: translateX(-50%) translateY(10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(-50%) translateY(0); 
+            }
+        }
+        
+        .unlimited-note {
+            color: #00b894;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="captcha-container">
+        <div class="header">
+            <div class="step-indicator">
+                <div class="step active">1</div>
+                <div class="step">2</div>
+                <div class="step">3</div>
+            </div>
+            <h1>УДЕРЖИ КНОПКУ 13.6 СЕКУНД</h1>
+            <div class="instructions">
+                Удерживай кнопку <strong>ровно 13.6 секунд</strong> 
+                
+            </div>
+        </div>
+        
+        <div class="required-time">
+            Требуемое время: <span id="requiredTime">13.6</span> секунд
+        </div>
+        
+        <div class="warning">
+            ⚠️ Внимание: НАХУЙ кнопка имеет <span class="escape-warning">10% шанс "СЪЕБА"</span>!
+            Если кнопка СЪЕБЕТ - ТО ВСЕ.
+        </div>
+        
+        <div class="hold-button-container">
+            <div class="escape-notice" id="escapeNotice">А ДЕ КНОПКА АХХАХАХА</div>
+            <button class="hold-button" id="holdButton">
+                <div class="hold-time" id="holdTime">0.0</div>
+                <div class="hold-label">ЖМАЙ МЕНЯ</div>
+            </button>
+            <div class="progress-ring" id="progressRing"></div>
+        </div>
+        
+        <div class="escape-count">
+            НАЕБАЛА: <span id="escapeCount">0</span> раз
+        </div>
+        
+        <div class="unlimited-note">
+            ✅ ДА И ПОХУЙ 
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            ✅ НЕКССТ...
+        </div>
+    </div>
+
+    <script>
+        const REQUIRED_TIME = 13600; // 13.6 секунд в миллисекундах
+        const ESCAPE_CHANCE = 0.1; // 40% шанс побега
+        const ESCAPE_SPEED = 2; // Скорость "побега" кнопки
+        
+        let holdButton = document.getElementById('holdButton');
+        let holdTime = document.getElementById('holdTime');
+        let progressRing = document.getElementById('progressRing');
+        let successMessage = document.getElementById('successMessage');
+        let escapeNotice = document.getElementById('escapeNotice');
+        let escapeCountElement = document.getElementById('escapeCount');
+        
+        let isHolding = false;
+        let holdStartTime = 0;
+        let holdTimer = null;
+        let currentHoldTime = 0;
+        let containerRect = null;
+        let escapeCount = 0;
+        let isButtonEscaped = false;
+        let escapeTimeout = null;
+        
+        // Инициализация событий
+        function initTask4() {
+            holdButton.addEventListener('mousedown', startHolding);
+            holdButton.addEventListener('touchstart', startHolding);
+            
+            holdButton.addEventListener('mouseup', stopHolding);
+            holdButton.addEventListener('mouseleave', stopHolding);
+            holdButton.addEventListener('touchend', stopHolding);
+            
+            // Получаем размеры контейнера
+            containerRect = holdButton.parentElement.getBoundingClientRect();
+            
+            updateButtonPosition();
+        }
+        
+        function startHolding(e) {
+            if (e.type === 'touchstart') e.preventDefault();
+            if (isHolding || isButtonEscaped) return;
+            
+            isHolding = true;
+            holdStartTime = Date.now();
+            holdButton.classList.add('holding');
+            
+            // Сбрасываем время
+            currentHoldTime = 0;
+            updateHoldDisplay();
+            
+            // Запускаем таймер
+            holdTimer = setInterval(updateHold, 50);
+            
+            // Проверяем на побег кнопки
+            checkForEscape();
+        }
+        
+        function stopHolding() {
+            if (!isHolding) return;
+            
+            isHolding = false;
+            holdButton.classList.remove('holding');
+            clearInterval(holdTimer);
+            
+            if (escapeTimeout) {
+                clearTimeout(escapeTimeout);
+                escapeTimeout = null;
+            }
+            
+            // Если кнопка не убежала, но отпустили раньше времени
+            if (!isButtonEscaped && currentHoldTime < REQUIRED_TIME) {
+                // Просто сбрасываем - без штрафов
+                setTimeout(() => {
+                    alert(`НАХУЙ ТЫ ОТПУСКАЕШЬ`);
+                    resetButton();
+                }, 100);
+            }
+        }
+        
+        function updateHold() {
+            if (!isHolding) return;
+            
+            currentHoldTime = Date.now() - holdStartTime;
+            
+            // Обновляем отображение
+            updateHoldDisplay();
+            
+            // Проверяем достижение нужного времени
+            if (currentHoldTime >= REQUIRED_TIME) {
+                completeTask();
+            }
+        }
+        
+        function updateHoldDisplay() {
+            const seconds = (currentHoldTime / 1000).toFixed(1);
+            holdTime.textContent = seconds;
+            
+            // Обновляем прогресс-бар
+            const progress = Math.min(100, (currentHoldTime / REQUIRED_TIME) * 100);
+            progressRing.style.background = `conic-gradient(#00b894 ${progress}%, transparent ${progress}%)`;
+        }
+        
+        function checkForEscape() {
+            if (!isHolding || isButtonEscaped) return;
+            
+            // 40% шанс что кнопка "убежит"
+            if (Math.random() < ESCAPE_CHANCE) {
+                escapeButton();
+            } else {
+                // Планируем следующую проверку через случайное время
+                const nextCheck = 500 + Math.random() * 1500; // 0.5-2 секунды
+                escapeTimeout = setTimeout(checkForEscape, nextCheck);
+            }
+        }
+        
+        function escapeButton() {
+            if (!isHolding || isButtonEscaped) return;
+            
+            isButtonEscaped = true;
+            escapeCount++;
+            escapeCountElement.textContent = escapeCount;
+            
+            // Показываем уведомление
+            escapeNotice.classList.add('show');
+            setTimeout(() => {
+                escapeNotice.classList.remove('show');
+            }, 1500);
+            
+            // Вычисляем случайное направление побега
+            const maxX = containerRect.width - holdButton.offsetWidth;
+            const maxY = containerRect.height - holdButton.offsetHeight;
+            
+            const escapeX = (Math.random() - 0.5) * 2 * maxX * ESCAPE_SPEED;
+            const escapeY = (Math.random() - 0.5) * 2 * maxY * ESCAPE_SPEED;
+            
+            // Устанавливаем CSS переменные для анимации
+            holdButton.style.setProperty('--escape-x', `${escapeX}px`);
+            holdButton.style.setProperty('--escape-y', `${escapeY}px`);
+            
+            // Добавляем класс для анимации побега
+            holdButton.classList.add('escaped');
+            
+            // Останавливаем удержание
+            clearInterval(holdTimer);
+            isHolding = false;
+            holdButton.classList.remove('holding');
+            
+            // Через 1 секунду возвращаем кнопку
+            setTimeout(() => {
+                resetButtonPosition();
+                holdButton.classList.remove('escaped');
+                isButtonEscaped = false;
+                
+                // Сообщаем пользователю
+                setTimeout(() => {
+                    alert('АХАХХАХАХА ЛЕЙМ');
+                }, 200);
+            }, 1000);
+        }
+        
+        function resetButtonPosition() {
+            // Возвращаем кнопку в центр
+            const centerX = (containerRect.width - holdButton.offsetWidth) / 2;
+            const centerY = (containerRect.height - holdButton.offsetHeight) / 2;
+            
+            holdButton.style.left = `${centerX}px`;
+            holdButton.style.top = `${centerY}px`;
+        }
+        
+        function updateButtonPosition() {
+            if (!containerRect) {
+                containerRect = holdButton.parentElement.getBoundingClientRect();
+            }
+            
+            resetButtonPosition();
+        }
+        
+        function resetButton() {
+            isHolding = false;
+            isButtonEscaped = false;
+            currentHoldTime = 0;
+            
+            holdButton.classList.remove('holding', 'escaped');
+            clearInterval(holdTimer);
+            
+            if (escapeTimeout) {
+                clearTimeout(escapeTimeout);
+                escapeTimeout = null;
+            }
+            
+            updateHoldDisplay();
+            resetButtonPosition();
+        }
+        
+        function completeTask() {
+            clearInterval(holdTimer);
+            isHolding = false;
+            
+            // Показываем сообщение об успехе
+            successMessage.classList.add('show');
+            
+            // Сохраняем прогресс
+            localStorage.setItem('captcha1Progress', '100');
+            
+            // Автоматический переход через 2 секунды
+            setTimeout(() => {
+                window.location.href = 'captcha2.html';
+            }, 2000);
+        }
+        
+        // Обработчик изменения размера окна
+        window.addEventListener('resize', updateButtonPosition);
+        
+        // Запуск при загрузке
+        window.onload = function() {
+            initTask4();
+        };
+    </script>
+</body>
+</html>
